@@ -64,7 +64,14 @@ function draw() {
         if (difference < 0.0) {
           stroke("#f180d5");
         }
-        arc(width / 2, height / 2, r, r, start_angle, stop_angle);
+        arc(
+          width / 2,
+          height / 2,
+          r,
+          r,
+          start_angle,
+          start_angle + (step_angle / 5) * ind.score
+        );
         r += 22;
       }
       r += 10;
