@@ -20,7 +20,7 @@ function setup() {
   };
   for (let [_id, eco] of Object.entries(data)) {
     d.economies[eco.key] = [
-      { key: eco.key, label: eco.label, kind: "economy" },
+      { key: eco.key, label: eco.label, kind: "economy", eco_key: eco.key },
     ];
     for (let dim of eco.dimensions) {
       if (!d.dimensions[eco.key]) {

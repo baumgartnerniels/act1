@@ -6,7 +6,7 @@
 
   let colorScale = scaleLinear()
     .domain([0, 0.5, 1])
-    .range(["red", "green", "blue"])
+    .range(["red", "pink", "blue"])
     .interpolate(interpolateRgb.gamma(2.2));
 
   let gridSize = Math.ceil(Math.sqrt(data.length));
@@ -19,11 +19,40 @@
 
   const dispatch = createEventDispatcher();
 
+  function selectParents(parentKey, ecoKey) {
+    document
+      .querySelectorAll(
+        '[data-key="' + parentKey + '"][data-eco="' + ecoKey + '"]'
+      )
+      .forEach((e) => {
+        e.classList.add("selected");
+        e.classList.add("parent");
+        let newParentKey = e.getAttribute("data-parent");
+        if (newParentKey) {
+          selectParents(newParentKey, ecoKey);
+        }
+      });
+  }
+
+  function selectChildren(key, ecoKey) {
+    document
+      .querySelectorAll(
+        '[data-parent="' + key + '"][data-eco="' + ecoKey + '"]'
+      )
+      .forEach((e) => {
+        e.classList.add("selected");
+        e.classList.add("child");
+      });
+  }
+
   function setSelected(event, data) {
     document.querySelectorAll(".dot.selected").forEach((e) => {
-      console.log(e);
       e.classList.remove("selected");
+      e.classList.remove("parent");
+      e.classList.remove("child");
     });
+    selectParents(data.parent_key, data.eco_key);
+    selectChildren(data.key, data.eco_key);
     event.target.classList.add("selected");
     dispatch("selected", {
       element: event.target,
@@ -50,7 +79,9 @@
     <div
       class="dot"
       data-score={dot.score}
+      data-eco={dot.eco_key}
       data-key={dot.key}
+      data-parent={dot.parent_key}
       style={style(dot)}
       on:click={(e) => {
         setSelected(e, dot);
