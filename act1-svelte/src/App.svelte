@@ -2,13 +2,13 @@
   import { onMount } from "svelte";
   import Tower from "./Tower.svelte";
   let zoom = 50;
-  import data from "../data/compiled_data.json";
+  import data from "../data/app_data.json";
   console.log(data);
 </script>
 
 <main>
   <div class="tower">
-    <Tower --zoom={zoom / 50.0} />
+    <Tower {data} --zoom={zoom / 50.0} />
   </div>
   <div class="details">
     <input
@@ -32,6 +32,9 @@
     display: grid;
     /* grid-template-columns: 61.803% 38.197%; */
     grid-template-columns: 50% 50%;
+    grid-template-rows: 100%;
+    width: 100%;
+    height: 100%;
   }
 
   h1 {
