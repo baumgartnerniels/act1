@@ -1,6 +1,9 @@
 <script>
+  import { onMount } from "svelte";
   import Tower from "./Tower.svelte";
   let zoom = 50;
+  import data from "../data/compiled_data.json";
+  console.log(data);
 </script>
 
 <main>
@@ -27,7 +30,8 @@
     text-align: center;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 61.803% 38.197%;
+    /* grid-template-columns: 61.803% 38.197%; */
+    grid-template-columns: 50% 50%;
   }
 
   h1 {
