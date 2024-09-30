@@ -1,25 +1,15 @@
 <script>
   import { onMount } from "svelte";
   import Tower from "./Tower.svelte";
-  let zoom = 50;
   import data from "../data/app_data.json";
   console.log(data);
 </script>
 
 <main>
   <div class="tower">
-    <Tower {data} --zoom={zoom / 50.0} />
+    <Tower {data} />
   </div>
-  <div class="details">
-    <input
-      type="range"
-      id="zoom"
-      name="zoom"
-      bind:value={zoom}
-      min="1"
-      max="100"
-    />
-  </div>
+  <div class="details"></div>
 </main>
 
 <style>

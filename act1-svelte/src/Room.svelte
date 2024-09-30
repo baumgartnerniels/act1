@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
   import { scaleLinear, interpolateRgb } from "d3";
 
   export let data = [];
@@ -17,6 +17,27 @@
     return "background-color: " + color + ";";
   }
 
+  const dispatch = createEventDispatcher();
+
+  function setSelected(event, data) {
+    document.querySelectorAll(".dot.selected").forEach((e) => {
+      console.log(e);
+      e.classList.remove("selected");
+    });
+    event.target.classList.add("selected");
+    dispatch("selected", {
+      element: event.target,
+      data: data,
+    });
+  }
+
+  function setHovered(event, data) {
+    dispatch("hovered", {
+      element: event.target,
+      data: data,
+    });
+  }
+
   onMount(() => {
     room.style = "--grid-size: " + gridSize;
   });
@@ -24,10 +45,19 @@
 
 <div class="room" bind:this={room}>
   {#each data as dot}
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div
-      class={"dot " + dot.key}
+      class="dot"
       data-score={dot.score}
+      data-key={dot.key}
       style={style(dot)}
+      on:click={(e) => {
+        setSelected(e, dot);
+      }}
+      on:mouseenter={(e) => {
+        setHovered(e, dot);
+      }}
     ></div>
   {/each}
 </div>
@@ -53,8 +83,7 @@
   .dot:hover {
     border: 1px solid #ffffff;
   }
-  :root {
-    --margin-top: -60px;
-    --rotation: 30deg;
+  :global(.dot.selected) {
+    border: 2px solid #ffffff;
   }
 </style>

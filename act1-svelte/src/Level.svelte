@@ -3,16 +3,20 @@
 </div>
 
 <style>
+  :root {
+    --room-size: 14vh;
+    --rotation: 30deg;
+  }
   .level {
-    --country-size: 80px;
     z-index: var(--z);
     display: grid;
-    grid-template-columns: repeat(3, var(--country-size));
-    grid-template-rows: repeat(2, var(--country-size));
+    grid-template-columns: repeat(3, var(--room-size));
+    grid-template-rows: repeat(2, var(--room-size));
     grid-gap: 5px;
     align-items: center;
     transform: rotateX(60deg) rotateZ(var(--rotation));
     position: relative;
     margin-top: var(--margin-top);
+    height: fit-content;
   }
 </style>
