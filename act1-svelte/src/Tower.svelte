@@ -1,30 +1,112 @@
 <script>
+  import { onMount } from "svelte";
   import Level from "./Level.svelte";
-  let ms = 10;
-  let counter = 0;
-  const incr = () => (counter += 0.1);
+  import Room from "./Room.svelte";
+  import panzoom from "panzoom";
 
-  let clear;
-  $: {
-    clearInterval(clear);
-    clear = setInterval(incr, ms);
+  export let data;
+
+  let tower;
+
+  function handleSelected(m) {
+    console.log("clicked on " + m.detail.data.key);
+    console.log(m.detail.data);
   }
+
+  function handleHovered(m) {
+    console.log("hovered over " + m.detail.data.key);
+  }
+
+  function setupZoom(el) {
+    let pz = panzoom(tower, {
+      minZoom: 1,
+      maxZoom: 5,
+      bounds: false,
+      smoothScroll: false,
+    });
+    let zoomcenter = { x: 0, y: 0, scale: 1 };
+    pz.on("panend", function (e) {
+      if (zoomcenter.scale < 1.05) {
+        pz.smoothMoveTo(0, 0);
+      } else {
+        pz.smoothMoveTo(zoomcenter.x, zoomcenter.y);
+      }
+    });
+    pz.on("zoom", function (e) {
+      let t = pz.getTransform();
+      zoomcenter = { ...t };
+      if (zoomcenter.scale < 1.05) {
+        pz.smoothMoveTo(0, 0);
+      }
+    });
+
+    return pz;
+  }
+
+  onMount(() => {
+    let pz = setupZoom(tower);
+    return () => {
+      pz.dispose();
+    };
+  });
+  let countries = ["ALB", "BIH", "KOS", "MNE", "MKD", "SRB"];
 </script>
 
-<div class="tower">
-  <Level --margin-top="0px" --rotation={counter + "deg"} --z="60" />
-  <Level --margin-top="-60px" --rotation={counter + "deg"} --z="50" />
-  <Level --margin-top="-60px" --rotation={counter + "deg"} --z="40" />
-  <Level --margin-top="-60px" --rotation={counter + "deg"} --z="30" />
-  <Level --margin-top="-60px" --rotation={counter + "deg"} --z="20" />
-  <Level --margin-top="-60px" --rotation={counter + "deg"} --z="10" />
+<div class="tower" bind:this={tower}>
+  <Level --margin-top="0px" --z="60">
+    {#each countries as country}
+      <Room
+        on:selected={handleSelected}
+        on:hovered={handleHovered}
+        data={data.economies[country]}
+      />
+    {/each}
+  </Level>
+  <Level --z="50">
+    {#each countries as country}
+      <Room
+        on:selected={handleSelected}
+        on:hovered={handleHovered}
+        data={data.dimensions[country]}
+      />
+    {/each}
+  </Level>
+  <Level --z="40">
+    {#each countries as country}
+      <Room
+        on:selected={handleSelected}
+        on:hovered={handleHovered}
+        data={data.subdimensions[country]}
+      />
+    {/each}
+  </Level>
+  <Level --z="30">
+    {#each countries as country}
+      <Room
+        on:selected={handleSelected}
+        on:hovered={handleHovered}
+        data={data.indicators[country]}
+      />
+    {/each}
+  </Level>
+  <Level --z="20">
+    {#each countries as country}
+      <Room
+        on:selected={handleSelected}
+        on:hovered={handleHovered}
+        data={data.levels[country]}
+      />
+    {/each}
+  </Level>
 </div>
 
 <style>
   .tower {
     width: 100%;
+    height: 100%;
     display: grid;
     justify-content: center;
-    transform: scale(var(--zoom));
+    /* transform: scale(var(--zoom)); */
+    --margin-top: -11vh;
   }
 </style>
