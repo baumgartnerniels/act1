@@ -7,20 +7,46 @@
   export let data;
 
   let tower;
+  let zoom;
 
   function handleSelected(m) {
     console.log("clicked on " + m.detail.data.key);
     console.log(m.detail.data);
+    // zoomTo(m.detail.element);
+  }
+
+  export function zoomTo(element) {
+    let targetRect = element.getBoundingClientRect();
+    let containerRect = tower.parentElement.getBoundingClientRect();
+    let t = zoom.getTransform();
+    console.log(zoom);
+    console.log(tower);
+    if (t.scale < 3) {
+      zoom.smoothZoom(targetRect.x, targetRect.y, 4);
+    } else {
+      var cx = targetRect.left + targetRect.width / 2;
+      var cy = targetRect.top + targetRect.height / 2;
+
+      var dx = containerRect.width / 2 - cx;
+      var dy = containerRect.height / 2 - cy;
+      console.log(t);
+      console.log(targetRect);
+      zoom.smoothMoveTo(dx + t.x, dy + t.y);
+    }
+  }
+
+  export function resetZoom() {
+    zoom.smoothZoom(0, 0, 1);
   }
 
   function handleHovered(m) {
-    console.log("hovered over " + m.detail.data.key);
+    //console.log("hovered over " + m.detail.data.key);
   }
 
   function setupZoom(el) {
     let pz = panzoom(tower, {
       minZoom: 1,
-      maxZoom: 5,
+      maxZoom: 4,
       bounds: false,
       smoothScroll: false,
     });
@@ -44,16 +70,16 @@
   }
 
   onMount(() => {
-    let pz = setupZoom(tower);
+    zoom = setupZoom(tower);
     return () => {
-      pz.dispose();
+      zoom.dispose();
     };
   });
   let countries = ["ALB", "BIH", "KOS", "MNE", "MKD", "SRB"];
 </script>
 
 <div class="tower" bind:this={tower}>
-  <Level --margin-top="0px" --z="60">
+  <Level --margin-top="-2vh" --z="60" selectable={true} label="Economies">
     {#each countries as country}
       <Room
         on:selected={handleSelected}
@@ -62,7 +88,7 @@
       />
     {/each}
   </Level>
-  <Level --z="50">
+  <Level --z="50" label="Dimensions">
     {#each countries as country}
       <Room
         on:selected={handleSelected}
@@ -71,7 +97,7 @@
       />
     {/each}
   </Level>
-  <Level --z="40">
+  <Level --z="40" label="Subdimensions">
     {#each countries as country}
       <Room
         on:selected={handleSelected}
@@ -80,7 +106,7 @@
       />
     {/each}
   </Level>
-  <Level --z="30">
+  <Level --z="30" label="Indicators">
     {#each countries as country}
       <Room
         on:selected={handleSelected}
@@ -89,7 +115,7 @@
       />
     {/each}
   </Level>
-  <Level --z="20">
+  <Level --z="20" label="Levels">
     {#each countries as country}
       <Room
         on:selected={handleSelected}
@@ -107,6 +133,6 @@
     display: grid;
     justify-content: center;
     /* transform: scale(var(--zoom)); */
-    --margin-top: -11vh;
+    --margin-top: -14vh;
   }
 </style>

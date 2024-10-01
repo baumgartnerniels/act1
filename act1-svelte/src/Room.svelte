@@ -114,7 +114,7 @@
   .dot:hover {
     border: 1px solid #ffffff;
   }
-  :global(.dot.selected) {
+  :is(.dot.selected) {
     border: 2px solid #ffffff;
   }
 </style>
